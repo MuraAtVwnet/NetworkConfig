@@ -1,0 +1,57 @@
+Rename-Computer web21
+
+
+Set-NetIPInterface -RouterDiscovery Disabled
+Get-NetAdapter | Set-DnsClientServerAddress -ServerAddresses 192.168.33.1,192.168.33.2 2400:400e:400::dc01 2400:400e:400::dc02
+Get-NetAdapter | New-NetIPAddress -AddressFamily IPv4 -IPAddress 114.179.2.163 -PrefixLength 28 -DefaultGateway 114.179.2.161
+Get-NetAdapter | New-NetIPAddress -AddressFamily IPv6 -IPAddress 2400:400e:400:ff::80 -PrefixLength 64
+Get-NetAdapter | New-NetRoute -AddressFamily IPv6 -DestinationPrefix ::/0 -NextHop fe80::1
+
+
+PS C:\> ipconfig /all
+
+Windows IP 構成
+
+   ホスト名. . . . . . . . . . . . . . .: web21
+   プライマリ DNS サフィックス . . . . .:
+   ノード タイプ . . . . . . . . . . . .: ハイブリッド
+   IP ルーティング有効 . . . . . . . . .: いいえ
+   WINS プロキシ有効 . . . . . . . . . .: いいえ
+
+イーサネット アダプター イーサネット:
+
+   接続固有の DNS サフィックス . . . . .:
+   説明. . . . . . . . . . . . . . . . .: Microsoft Hyper-V Network Adapter #3
+   物理アドレス. . . . . . . . . . . . .: 00-15-5D-21-C5-01
+   DHCP 有効 . . . . . . . . . . . . . .: いいえ
+   自動構成有効. . . . . . . . . . . . .: はい
+   IPv6 アドレス . . . . . . . . . . . .: 2400:400e:400:ff::80(優先)
+   リンクローカル IPv6 アドレス. . . . .: fe80::cf49:9221:c7a1:e660%5(優先)
+   IPv4 アドレス . . . . . . . . . . . .: 114.179.2.163(優先)
+   サブネット マスク . . . . . . . . . .: 255.255.255.240
+   デフォルト ゲートウェイ . . . . . . .: fe80::1%5
+                                          114.179.2.161
+   DHCPv6 IAID . . . . . . . . . . . . .: 134223197
+   DHCPv6 クライアント DUID. . . . . . .: 00-01-00-01-30-44-A7-81-00-15-5D-21-C5-01
+   DNS サーバー. . . . . . . . . . . . .: fd75:f582:7ae3::dc01
+                                          fd75:f582:7ae3::dc02
+                                          192.168.33.1
+                                          192.168.33.2
+   NetBIOS over TCP/IP . . . . . . . . .: 有効
+
+
+PS C:\> Get-NetAdapter | sort MacAddress | ft -AutoSize
+
+Name         InterfaceDescription                 ifIndex Status MacAddress        LinkSpeed
+----         --------------------                 ------- ------ ----------        ---------
+イーサネット Microsoft Hyper-V Network Adapter #3       5 Up     00-15-5D-21-C5-01    1 Gbps
+
+
+
+PS C:\> get-disk | sort Number | ft -AutoSize
+
+Number Friendly Name        Serial Number        HealthStatus OperationalStatus Total Size Partition Style
+------ -------------        -------------        ------------ ----------------- ---------- ---------------
+0      Msft Virtual Disk                         Healthy      Online                127 GB GPT
+1      Msft Virtual Disk                         Healthy      Online                127 GB GPT
+2      WDC WD40EZAX-00C8UB0      WD-WX72D74HZJTL Healthy      Online               3.64 TB GPT

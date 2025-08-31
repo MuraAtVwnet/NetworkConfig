@@ -1,0 +1,114 @@
+Rename-Computer WSV11
+
+Get-NetAdapter | ? MacAddress -eq "A0-AD-9F-A0-59-47" | Set-DnsClientServerAddress -ServerAddresses 192.168.33.1,192.168.33.2
+Get-NetAdapter | ? MacAddress -eq "A0-AD-9F-A0-59-47" | New-NetIPAddress -AddressFamily IPv4 -IPAddress 192.168.33.197 -PrefixLength 24 -DefaultGateway 192.168.33.254
+
+Get-NetAdapter | ? MacAddress -eq "A0-AD-9F-A0-59-47" | Rename-NetAdapter -NewName "Host"
+Get-NetAdapter | ? MacAddress -eq "A0-36-9F-A1-27-57" | Rename-NetAdapter -NewName "LAN-2"
+Get-NetAdapter | ? MacAddress -eq "A0-36-9F-A1-27-56" | Rename-NetAdapter -NewName "LAN-1"
+Get-NetAdapter | ? MacAddress -eq "A0-36-9F-A1-27-55" | Rename-NetAdapter -NewName "DMZ-1"
+Get-NetAdapter | ? MacAddress -eq "A0-36-9F-A1-27-54" | Rename-NetAdapter -NewName "DMZ-2"
+Get-NetAdapter | ? MacAddress -eq "A0-36-9F-11-84-29" | Rename-NetAdapter -NewName "Test"
+Get-NetAdapter | ? MacAddress -eq "A0-36-9F-11-84-28" | Rename-NetAdapter -NewName "FileServer"
+Get-NetAdapter | ? MacAddress -eq "A0-AD-9F-A0-59-48" | Rename-NetAdapter -NewName "flets"
+
+Get-NetAdapter | ? MacAddress -eq "A0-36-9F-A1-27-57" | New-VMSwitch -ComputerName localhost -AllowManagementOS:$False  -Name  "LAN-2"
+Get-NetAdapter | ? MacAddress -eq "A0-36-9F-A1-27-56" | New-VMSwitch -ComputerName localhost -AllowManagementOS:$False  -Name  "LAN-1"
+Get-NetAdapter | ? MacAddress -eq "A0-36-9F-A1-27-55" | New-VMSwitch -ComputerName localhost -AllowManagementOS:$False  -Name  "DMZ-1"
+Get-NetAdapter | ? MacAddress -eq "A0-36-9F-A1-27-54" | New-VMSwitch -ComputerName localhost -AllowManagementOS:$False  -Name  "DMZ-2"
+Get-NetAdapter | ? MacAddress -eq "A0-36-9F-11-84-29" | New-VMSwitch -ComputerName localhost -AllowManagementOS:$False  -Name  "Test"
+Get-NetAdapter | ? MacAddress -eq "A0-36-9F-11-84-28" | New-VMSwitch -ComputerName localhost -AllowManagementOS:$False  -Name  "FileServer"
+Get-NetAdapter | ? MacAddress -eq "A0-AD-9F-A0-59-48" | New-VMSwitch -ComputerName localhost -AllowManagementOS:$False  -Name  "Flets"
+
+
+PS C:\> ipconfig /all
+
+Windows IP 構成
+
+   ホスト名. . . . . . . . . . . . . . .: WSV11
+   プライマリ DNS サフィックス . . . . .: vwnet.jp
+   ノード タイプ . . . . . . . . . . . .: ハイブリッド
+   IP ルーティング有効 . . . . . . . . .: いいえ
+   WINS プロキシ有効 . . . . . . . . . .: いいえ
+   DNS サフィックス検索一覧. . . . . . .: vwnet.jp
+
+イーサネット アダプター Host:
+
+   接続固有の DNS サフィックス . . . . .: vwnet.jp
+   説明. . . . . . . . . . . . . . . . .: Intel(R) Ethernet Controller I226-LM
+   物理アドレス. . . . . . . . . . . . .: A0-AD-9F-A0-59-47
+   DHCP 有効 . . . . . . . . . . . . . .: いいえ
+   自動構成有効. . . . . . . . . . . . .: はい
+   IPv6 アドレス . . . . . . . . . . . .: 2400:400e:400:0:d079:c2c1:ebbc:4019(優先)
+   IPv6 アドレス . . . . . . . . . . . .: fd75:f582:7ae3:0:172f:523e:b077:d83a(優先)
+   リンクローカル IPv6 アドレス. . . . .: fe80::9230:a0a7:b877:3b48%14(優先)
+   IPv4 アドレス . . . . . . . . . . . .: 192.168.33.197(優先)
+   サブネット マスク . . . . . . . . . .: 255.255.255.0
+   デフォルト ゲートウェイ . . . . . . .: fe80::1%14
+                                          192.168.33.254
+   DHCPv6 IAID . . . . . . . . . . . . .: 111193503
+   DHCPv6 クライアント DUID. . . . . . .: 00-01-00-01-30-44-4D-83-A0-AD-9F-A0-59-47
+   DNS サーバー. . . . . . . . . . . . .: fd75:f582:7ae3::dc02
+                                          fd75:f582:7ae3::dc01
+                                          192.168.33.1
+                                          192.168.33.2
+   NetBIOS over TCP/IP . . . . . . . . .: 有効
+   接続固有の DNS サフィックス検索の一覧:
+                                          vwnet.jp
+
+
+PS C:\> Get-NetAdapter | sort MacAddress | ft -AutoSize
+
+Name       InterfaceDescription                     ifIndex Status       MacAddress        LinkSpeed
+----       --------------------                     ------- ------       ----------        ---------
+FileServer Intel(R) Ethernet Server Adapter I350-T2       3 Up           A0-36-9F-11-84-28    1 Gbps
+Test       Intel(R) Ethernet Server Adapter I...#2       12 Disconnected A0-36-9F-11-84-29     0 bps
+DMZ-2      Intel(R) Ethernet Server Adapter I350-T4       5 Up           A0-36-9F-A1-27-54    1 Gbps
+DMZ-1      Intel(R) Ethernet Server Adapter I...#2       20 Up           A0-36-9F-A1-27-55    1 Gbps
+LAN-1      Intel(R) Ethernet Server Adapter I...#3       21 Up           A0-36-9F-A1-27-56    1 Gbps
+LAN-2      Intel(R) Ethernet Server Adapter I...#4        9 Up           A0-36-9F-A1-27-57    1 Gbps
+Host       Intel(R) Ethernet Controller I226-LM          14 Up           A0-AD-9F-A0-59-47    1 Gbps
+flets      Intel(R) Ethernet Controller I226-LM #2       19 Up           A0-AD-9F-A0-59-48  100 Mbps
+
+
+PS C:\> Get-VMSwitch | sort Name | ft -AutoSize
+
+Name       SwitchType NetAdapterInterfaceDescription
+----       ---------- ------------------------------
+DMZ-1      External   Intel(R) Ethernet Server Adapter I350-T4 #2
+DMZ-2      External   Intel(R) Ethernet Server Adapter I350-T4
+FileServer External   Intel(R) Ethernet Server Adapter I350-T2
+Flets      External   Intel(R) Ethernet Controller I226-LM #2
+LAN-1      External   Intel(R) Ethernet Server Adapter I350-T4 #3
+LAN-2      External   Intel(R) Ethernet Server Adapter I350-T4 #4
+Test       External   Intel(R) Ethernet Server Adapter I350-T2 #2
+
+
+PS C:\> get-vm | sort Name | ft -AutoSize
+
+Name       State   CPUUsage(%) MemoryAssigned(M) Uptime           Status     Version
+----       -----   ----------- ----------------- ------           ------     -------
+DMZ-CA01   Running 0           1888              13:38:43.2560000 正常稼働中 12.0
+DMZ-FC01   Running 0           1956              13:38:43.3100000 正常稼働中 12.0
+DMZ-Mail02 Running 0           2394              12:24:54.3830000 正常稼働中 12.0
+DMZ-NS01   Running 0           2680              13:38:43.8450000 正常稼働中 12.0
+DMZ-Web21  Running 0           2554              12:50:35.1870000 正常稼働中 12.0
+LAN-DC01   Running 0           2644              13:38:43.6470000 正常稼働中 12.0
+LAN-DHCP01 Running 0           2032              13:38:43.4760000 正常稼働中 12.0
+LAN-File01 Running 0           2544              13:38:43.1920000 正常稼働中 12.0
+LAN-Syslog Running 0           2090              13:38:43.3890000 正常稼働中 12.0
+
+
+PS C:\> get-disk | sort Number | ft -AutoSize
+
+Number Friendly Name         Serial Number                          HealthStatus OperationalStatus Total Size Partition Style
+------ -------------         -------------                          ------------ ----------------- ---------- ---------------
+4      TOSHIBA DT01ACA300               50RUDBYAS                   Healthy      Offline              2.73 TB GPT (Mail Backup)
+5      WDC WD40EZAX-00C8UB0       WD-WX72D74HZJTL                   Healthy      Offline              3.64 TB GPT (Web Backup)
+6      WDC WD60EFPX-68C5ZN0       WD-WX82D253DACT                   Healthy      Offline              5.46 TB GPT (File Backup)
+7      INTEL SSDSC2CT120A3   CVMP2475019G120BGN                     Healthy      Online             111.79 GB GPT (C)
+8      WDC WD120EFGX-68CPHN0          WD-B00EWV5D                   Healthy      Online              10.91 TB GPT (WSV11 Backup)
+9      WDC WD40EFPX-68C6CN0       WD-WX62D451H8RH                   Healthy      Online               3.64 TB GPT (F VM Data)
+10     SSDs                  {bffe6dab-ab92-4343-b64a-14356da1c303} Healthy      Online               1.81 TB GPT (E SSDs)
+
+

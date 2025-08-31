@@ -1,0 +1,56 @@
+Rename-Computer ns01
+
+
+Set-NetIPInterface -RouterDiscovery Disabled
+Get-NetAdapter | Set-DnsClientServerAddress -ServerAddresses 192.168.33.1,192.168.33.2 2400:400e:400::dc01 2400:400e:400::dc02
+Get-NetAdapter | New-NetIPAddress -AddressFamily IPv4 -IPAddress 114.179.2.162 -PrefixLength 28 -DefaultGateway 114.179.2.161
+Get-NetAdapter | New-NetIPAddress -AddressFamily IPv6 -IPAddress 2400:400e:400:ff::53 -PrefixLength 64
+Get-NetAdapter | New-NetRoute -AddressFamily IPv6 -DestinationPrefix ::/0 -NextHop fe80::1
+
+
+PS C:\> ipconfig /all
+
+Windows IP 構成
+
+   ホスト名. . . . . . . . . . . . . . .: ns01
+   プライマリ DNS サフィックス . . . . .: vwnet.jp
+   ノード タイプ . . . . . . . . . . . .: ハイブリッド
+   IP ルーティング有効 . . . . . . . . .: いいえ
+   WINS プロキシ有効 . . . . . . . . . .: いいえ
+   DNS サフィックス検索一覧. . . . . . .: vwnet.jp
+
+イーサネット アダプター ローカル エリア接続:
+
+   接続固有の DNS サフィックス . . . . .:
+   説明. . . . . . . . . . . . . . . . .: Microsoft Hyper-V ネットワーク アダプター
+   物理アドレス. . . . . . . . . . . . .: 00-15-5D-21-C5-04
+   DHCP 有効 . . . . . . . . . . . . . .: いいえ
+   自動構成有効. . . . . . . . . . . . .: はい
+   IPv6 アドレス . . . . . . . . . . . .: 2400:400e:400:ff::53(優先)
+   リンクローカル IPv6 アドレス. . . . .: fe80::c933:2787:1a44:3532%4(優先)
+   IPv4 アドレス . . . . . . . . . . . .: 114.179.2.162(優先)
+   サブネット マスク . . . . . . . . . .: 255.255.255.240
+   デフォルト ゲートウェイ . . . . . . .: fe80::1%4
+                                          114.179.2.161
+   DNS サーバー. . . . . . . . . . . . .: fd75:f582:7ae3::dc01
+                                          fd75:f582:7ae3::dc02
+                                          192.168.33.1
+                                          192.168.33.2
+   NetBIOS over TCP/IP . . . . . . . . .: 無効
+
+
+PS C:\> Get-NetAdapter | sort MacAddress | ft -AutoSize
+
+Name                InterfaceDescription                      ifIndex Status MacAddress        LinkSpeed
+----                --------------------                      ------- ------ ----------        ---------
+ローカル エリア接続 Microsoft Hyper-V ネットワーク アダプター       4 Up     00-15-5D-21-C5-04    1 Gbps
+
+
+
+PS C:\> get-disk | sort Number | ft -AutoSize
+
+Number Friendly Name Serial Number HealthStatus OperationalStatus Total Size Partition Style
+------ ------------- ------------- ------------ ----------------- ---------- ---------------
+0      Virtual HD                  Healthy      Online                127 GB MBR
+
+

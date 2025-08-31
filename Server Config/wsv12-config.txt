@@ -1,0 +1,111 @@
+Rename-Computer WSV12
+
+Get-NetAdapter | ? MacAddress -eq "00-1B-21-A6-6D-FC" | New-NetIPAddress -AddressFamily IPv4 -IPAddress 192.168.33.198 -PrefixLength 24 -DefaultGateway 192.168.33.254
+Get-NetAdapter | ? MacAddress -eq "00-1B-21-A6-6D-FC" | Set-DnsClientServerAddress -ServerAddresses 192.168.33.1,192.168.33.2
+
+Get-NetAdapter | ? MacAddress -eq "00-1B-21-A6-6D-FC" | Rename-NetAdapter -NewName "Host"
+Get-NetAdapter | ? MacAddress -eq "00-1B-21-A6-6D-FE" | Rename-NetAdapter -NewName "DMZ"
+Get-NetAdapter | ? MacAddress -eq "00-1B-21-A6-6D-FD" | Rename-NetAdapter -NewName "LAN"
+Get-NetAdapter | ? MacAddress -eq "00-1B-21-A6-6D-FF" | Rename-NetAdapter -NewName "Test"
+Get-NetAdapter | ? MacAddress -eq "68-05-CA-17-92-BD" | Rename-NetAdapter -NewName "Flets"
+
+Get-NetAdapter | ? MacAddress -eq "00-1B-21-A6-6D-FE" | New-VMSwitch -ComputerName localhost -AllowManagementOS:$False -Name "DMZ"
+Get-NetAdapter | ? MacAddress -eq "00-1B-21-A6-6D-FD" | New-VMSwitch -ComputerName localhost -AllowManagementOS:$False -Name "LAN"
+Get-NetAdapter | ? MacAddress -eq "00-1B-21-A6-6D-FF" | New-VMSwitch -ComputerName localhost -AllowManagementOS:$False -Name "Test"
+Get-NetAdapter | ? MacAddress -eq "68-05-CA-17-92-BD" | New-VMSwitch -ComputerName localhost -AllowManagementOS:$False -Name "Flets"
+
+
+
+PS C:\> ipconfig /all
+
+Windows IP 構成
+
+   ホスト名. . . . . . . . . . . . . . .: WSV12
+   プライマリ DNS サフィックス . . . . .: vwnet.jp
+   ノード タイプ . . . . . . . . . . . .: ハイブリッド
+   IP ルーティング有効 . . . . . . . . .: いいえ
+   WINS プロキシ有効 . . . . . . . . . .: いいえ
+   DNS サフィックス検索一覧. . . . . . .: vwnet.jp
+
+イーサネット アダプター Host:
+
+   接続固有の DNS サフィックス . . . . .: vwnet.jp
+   説明. . . . . . . . . . . . . . . . .: Intel(R) Ethernet Server Adapter I340-T4 #2
+   物理アドレス. . . . . . . . . . . . .: 00-1B-21-A6-6D-FC
+   DHCP 有効 . . . . . . . . . . . . . .: いいえ
+   自動構成有効. . . . . . . . . . . . .: はい
+   IPv6 アドレス . . . . . . . . . . . .: 2400:400e:400:0:1f46:73d7:2fd0:dfcd(優先)
+   IPv6 アドレス . . . . . . . . . . . .: fd75:f582:7ae3:0:5fa3:e1d3:ab6:96bb(優先)
+   リンクローカル IPv6 アドレス. . . . .: fe80::58ab:c31a:94fe:4590%12(優先)
+   IPv4 アドレス . . . . . . . . . . . .: 192.168.33.198(優先)
+   サブネット マスク . . . . . . . . . .: 255.255.255.0
+   デフォルト ゲートウェイ . . . . . . .: fe80::1%12
+                                          192.168.33.254
+   DHCPv6 IAID . . . . . . . . . . . . .: 234887969
+   DHCPv6 クライアント DUID. . . . . . .: 00-01-00-01-28-EE-F9-B0-68-05-CA-17-92-BD
+   DNS サーバー. . . . . . . . . . . . .: fd75:f582:7ae3::dc02
+                                          fd75:f582:7ae3::dc01
+                                          192.168.33.1
+                                          192.168.33.2
+   NetBIOS over TCP/IP . . . . . . . . .: 有効
+   接続固有の DNS サフィックス検索の一覧:
+                                          vwnet.jp
+
+PS C:\> Get-NetAdapter | sort MacAddress | ft -AutoSize
+
+Name  InterfaceDescription                     ifIndex Status       MacAddress        LinkSpeed
+----  --------------------                     ------- ------       ----------        ---------
+Host  Intel(R) Ethernet Server Adapter I...#2       12 Up           00-1B-21-A6-6D-FC    1 Gbps
+LAN   Intel(R) Ethernet Server Adapter I...#4        6 Up           00-1B-21-A6-6D-FD    1 Gbps
+DMZ   Intel(R) Ethernet Server Adapter I340-T4      15 Up           00-1B-21-A6-6D-FE    1 Gbps
+Test  Intel(R) Ethernet Server Adapter I...#3        8 Disconnected 00-1B-21-A6-6D-FF     0 bps
+Flets Intel(R) Gigabit CT Desktop Adapter #2        16 Up           68-05-CA-17-92-BD  100 Mbps
+
+
+PS C:\> Get-VMSwitch | sort Name | ft -AutoSize
+
+Name  SwitchType NetAdapterInterfaceDescription
+----  ---------- ------------------------------
+DMZ   External   Intel(R) Ethernet Server Adapter I340-T4
+Flets External   Intel(R) Gigabit CT Desktop Adapter #2
+LAN   External   Intel(R) Ethernet Server Adapter I340-T4 #4
+Test  External   Intel(R) Ethernet Server Adapter I340-T4 #3
+
+PS C:\> get-vm | sort Name | ft -AutoSize
+
+Name                     State   CPUUsage(%) MemoryAssigned(M) Uptime             Status     Version
+----                     -----   ----------- ----------------- ------             ------     -------
+DMZ-FC02                 Running 0           2048              1.15:40:55.8510000 正常稼働中 10.0
+en-w11IP-Canary          Running 0           4096              22:58:42.8350000   正常稼働中 10.0
+flets                    Running 0           3224              1.15:40:57.2420000 正常稼働中 10.0
+jp-w10-LTSB2015          Running 0           1198              1.15:40:56.0460000 正常稼働中 10.0
+jp-w10-LTSB2016          Running 0           1500              1.15:40:56.4310000 正常稼働中 10.0
+jp-w10-LTSC2019          Running 0           1158              1.15:40:55.0440000 正常稼働中 10.0
+jp-w10-LTSC2021          Running 0           1470              1.15:40:56.3310000 正常稼働中 10.0
+jp-w11-CB                Running 0           4096              16:52:24.1940000   正常稼働中 10.0
+jp-w11-Dev               Running 0           4096              22:54:47.5620000   正常稼働中 10.0
+jp-w11-LTSC2024          Running 0           4096              16:52:42.9510000   正常稼働中 10.0
+jp-w11IP-Beta            Running 0           4096              1.01:58:18.2120000 正常稼働中 10.0
+jp-w11IP-Canary          Running 0           4096              22:58:56.7950000   正常稼働中 10.0
+jp-w11IP-Release Preview Running 0           4096              1.07:07:44.5000000 正常稼働中 10.0
+LAN-DC03                 Running 0           3916              1.15:40:55.6560000 正常稼働中 10.0
+LAN-DHCP02               Running 0           2182              1.15:40:56.4370000 正常稼働中 10.0
+LAN-Remote11             Running 0           4096              1.15:40:56.2180000 正常稼働中 10.0
+VirusCheck               Running 0           1944              1.15:40:57.3630000 正常稼働中 10.0
+
+
+PS C:\> get-disk | sort Number | ft -AutoSize
+
+Number Friendly Name         Serial Number                            HealthStatus OperationalStatus Total Size Partition Style
+------ -------------         -------------                            ------------ ----------------- ---------- ---------------
+0      INTEL SSDSC2CT120A3   CVMP227602BH120BGN                       Healthy      Online             111.79 GB GPT
+1      WDC WD10EURX-63UY4Y0       WD-WCC4J7DN16XK                     Healthy      Online             931.51 GB GPT
+2      WDC WD40EZRZ-00GXCB0       WD-WCC7K2PC3KRY                     Healthy      Online               3.64 TB GPT
+3      WD_BLACK SN750 SE 1TB E823_8FA6_BF53_0001_001B_448B_4549_9005. Healthy      Online             931.51 GB GPT
+4      SPCC M.2 PCIe SSD     6479_A722_4375_3830.                     Healthy      Online             953.87 GB GPT
+
+
+
+
+
+
